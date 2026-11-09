@@ -1,0 +1,53 @@
+# LLM Honeypot Hub — Configuration
+# Copy this file to config.yaml and fill in your values.
+
+# ─── LLM Settings ─────────────────────────────────────────────────────────────
+llm:
+  provider: openai
+  # Your OpenAI API key — or set env var OPENAI_API_KEY instead
+  api_key: ""
+  # gpt-4o-mini is cheap and fast; use gpt-4o for higher fidelity
+  model: gpt-4o-mini
+  temperature: 0.7
+  max_tokens: 512
+  # Keep at most this many turns in context per session (older turns are dropped)
+  max_history_turns: 20
+
+# ─── Protocol Servers ─────────────────────────────────────────────────────────
+protocols:
+  ssh:
+    enabled: true
+    host: "0.0.0.0"
+    port: 2222
+    # Path where the SSH host key will be stored (auto-generated if missing)
+    host_key: "configs/ssh_host_key"
+    # Ubuntu banner shown after login
+    banner: "Ubuntu 22.04.3 LTS (GNU/Linux 5.15.0-91-generic x86_64)"
+
+  http:
+    enabled: true
+    host: "0.0.0.0"
+    port: 8080
+    # Fake server header value
+    server_banner: "Apache/2.4.57 (Ubuntu)"
+
+  tcp:
+    enabled: true
+    host: "0.0.0.0"
+    port: 9999
+    # Seconds to wait for the next line of input before closing idle connections
+    read_timeout: 60
+
+# ─── Dashboard ────────────────────────────────────────────────────────────────
+dashboard:
+  enabled: true
+  # Bind only to localhost by default — expose cautiously
+  host: "127.0.0.1"
+  port: 5000
+
+# ─── Logging ──────────────────────────────────────────────────────────────────
+logging:
+  level: INFO          # DEBUG | INFO | WARNING | ERROR
+  json_output: false   # true = structured JSON logs to stdout
+  # JSONL file — each line is a JSON event record
+  file: "logs/honeypot.jsonl"

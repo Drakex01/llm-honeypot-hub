@@ -1,0 +1,21 @@
+version: '3.9'
+
+services:
+  honeypot:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "2222:2222"   # SSH
+      - "8080:8080"   # HTTP
+      - "9999:9999"   # TCP
+      - "5000:5000"   # Dashboard (consider binding to 127.0.0.1 in production)
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    volumes:
+      - ./configs:/app/configs
+      - ./logs:/app/logs
+    healthcheck:
+      test: ["CMD", "python", "-c", "import socket; s=socket.socket(); s.connect(('localhost',8080)); s.close()"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
